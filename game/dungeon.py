@@ -1,6 +1,6 @@
 # game/dungeon.py
 import random
-from config import WORLD_WIDTH, WORLD_HEIGHT, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS
+from config import WORLD_WIDTH, WORLD_HEIGHT, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, BRIDGE_WIDTH
 
 class Dungeon:
     def __init__(self, num_zones=ZONES, min_radius=ZONE_MIN_RADIUS, max_radius=ZONE_MAX_RADIUS):
@@ -14,7 +14,7 @@ class Dungeon:
     def generate(self):
         attempts = 0
         max_attempts = self.num_zones * 10
-        sizes = [self.max_radius] * 2 + [self.min_radius] * 2
+        sizes = [self.max_radius] * 4 + [self.min_radius] * 4  # 4 large, 4 small
         random.shuffle(sizes)
         while len(self.zones) < self.num_zones and attempts < max_attempts:
             radius = sizes[len(self.zones)] if len(self.zones) < len(sizes) else random.randint(self.min_radius, self.max_radius)
@@ -37,9 +37,21 @@ class Dungeon:
                 return True
         return False
 
-    def contains(self, x, y, radius=10):  # Updated for circular player
+    def contains(self, x, y, radius=10):
+        # Check zones
         for zx, zy, zr in self.zones:
             dist = ((x - zx) ** 2 + (y - zy) ** 2) ** 0.5
-            if dist + radius <= zr:  # Player fully inside zone
+            if dist + radius <= zr:
+                return True
+        # Check bridges (approximate as rectangle between endpoints)
+        for x1, y1, x2, y2 in self.bridges:
+            # Distance to line segment (simplified)
+            dx, dy = x2 - x1, y2 - y1
+            length = max((dx ** 2 + dy ** 2) ** 0.5, 1)  # Avoid division by zero
+            t = max(0, min(1, ((x - x1) * dx + (y - y1) * dy) / length ** 2))
+            proj_x = x1 + t * dx
+            proj_y = y1 + t * dy
+            dist_to_line = ((x - proj_x) ** 2 + (y - proj_y) ** 2) ** 0.5
+            if dist_to_line <= BRIDGE_WIDTH / 2 + radius:
                 return True
         return False

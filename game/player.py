@@ -21,7 +21,8 @@ class Player:
         if keys[pygame.K_a]: new_x -= self.speed
         if keys[pygame.K_d]: new_x += self.speed
 
-        if dungeon and dungeon.contains(new_x, new_y, self.radius):
+        # Move only if new position is valid (or no dungeon yet)
+        if not dungeon or dungeon.contains(new_x, new_y, self.radius):
             self.x, self.y = new_x, new_y
         self.x = max(self.radius, min(WORLD_WIDTH - self.radius, self.x))
         self.y = max(self.radius, min(WORLD_HEIGHT - self.radius, self.y))
