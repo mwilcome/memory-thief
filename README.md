@@ -1,3 +1,5 @@
+Inspired and Written With Grok3!
+
 memory-thief/
 ├── .git/                # Git repo (already initialized)
 ├── .gitignore           # Ignores venv/, __pycache__/, *.pyc
