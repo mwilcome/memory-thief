@@ -1,5 +1,11 @@
 Inspired and Written With Grok3!
 
+To Run:
+- install python and pygame
+- python main.py
+
+----------------------------------------------------------
+
 memory-thief/
 ├── .git/                # Git repo (already initialized)
 ├── .gitignore           # Ignores venv/, __pycache__/, *.pyc

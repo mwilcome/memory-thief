@@ -3,14 +3,14 @@ import pygame
 from game.player import Player
 from game.dungeon import Dungeon
 from utils.render import render_all
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS  # Explicitly import these
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, DUNGEON_ROOMS, DUNGEON_MIN_SIZE, DUNGEON_MAX_SIZE
 
 class GameEngine:
     def __init__(self, screen):
         self.screen = screen
         self.running = True
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.dungeon = Dungeon()
+        self.dungeon = Dungeon(DUNGEON_ROOMS, DUNGEON_MIN_SIZE, DUNGEON_MAX_SIZE)
         self.neurons = []  # Populate later
 
     def run(self, clock):
