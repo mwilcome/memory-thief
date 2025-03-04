@@ -3,13 +3,13 @@ import pygame
 from game.player import Player
 from game.dungeon import Dungeon
 from utils.render import render_all
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, WORLD_WIDTH, WORLD_HEIGHT
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, ZONE_MIN_COUNT, ZONE_MAX_COUNT, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, WORLD_WIDTH, WORLD_HEIGHT
 
 class GameEngine:
     def __init__(self, screen):
         self.screen = screen
         self.running = True
-        self.dungeon = Dungeon(ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS)
+        self.dungeon = Dungeon(ZONE_MIN_COUNT, ZONE_MAX_COUNT, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS)
         self.player = Player(self.dungeon.zones[0][0], self.dungeon.zones[0][1])
         self.neurons = []
         self.camera_x = 0
