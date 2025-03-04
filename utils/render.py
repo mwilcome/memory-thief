@@ -1,18 +1,14 @@
 # utils/render.py
 import pygame
-from config import COLORS, SCREEN_WIDTH, SCREEN_HEIGHT
+from config import COLORS, SCREEN_WIDTH, SCREEN_HEIGHT, BRIDGE_WIDTH
 
-def render_all(screen, player, dungeon, neurons):
+def render_all(screen, player, dungeon, neurons, camera_x, camera_y):
     screen.fill(COLORS["BACKGROUND"])
-    # Draw dungeon rooms
-    for room in dungeon.rooms:
-        pygame.draw.rect(screen, (50, 50, 50), room)  # Gray rooms
-    # Draw corridors
-    for x1, y1, x2, y2 in dungeon.corridors:
-        pygame.draw.line(screen, (80, 80, 80), (x1, y1), (x2, y2), 5)  # Thicker gray lines
-    # Draw player
-    pygame.draw.rect(screen, COLORS["PLAYER"], (player.x, player.y, 20, 20))
-    # Draw neurons
+    for x, y, radius in dungeon.zones:
+        pygame.draw.circle(screen, COLORS["ZONE"], (x - camera_x, y - camera_y), radius)
+    for x1, y1, x2, y2 in dungeon.bridges:
+        pygame.draw.line(screen, COLORS["BRIDGE"], (x1 - camera_x, y1 - camera_y), (x2 - camera_x, y2 - camera_y), BRIDGE_WIDTH)
+    pygame.draw.circle(screen, COLORS["PLAYER"], (player.x - camera_x, player.y - camera_y), player.radius)
     for neuron in neurons:
-        pygame.draw.rect(screen, COLORS["NEURON"], (neuron.x, neuron.y, 15, 15))
+        pygame.draw.rect(screen, COLORS["NEURON"], (neuron.x - camera_x, neuron.y - camera_y, 15, 15))
     pygame.display.flip()
