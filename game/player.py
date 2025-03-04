@@ -1,5 +1,6 @@
 # game/player.py
-from config import PLAYER_SPEED
+import pygame
+from config import PLAYER_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT  # Add SCREEN imports
 
 class Player:
     def __init__(self, x, y):

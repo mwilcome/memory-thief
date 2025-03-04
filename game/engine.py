@@ -1,7 +1,9 @@
 # game/engine.py
+import pygame
 from game.player import Player
 from game.dungeon import Dungeon
 from utils.render import render_all
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS  # Explicitly import these
 
 class GameEngine:
     def __init__(self, screen):

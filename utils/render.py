@@ -1,4 +1,5 @@
 # utils/render.py
+import pygame  # Add this
 from config import COLORS, SCREEN_WIDTH, SCREEN_HEIGHT
 
 def render_all(screen, player, dungeon, neurons):
