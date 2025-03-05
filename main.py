@@ -1,4 +1,3 @@
-# main.py
 import pygame
 from game.engine import GameEngine
 from config import SCREEN_WIDTH, SCREEN_HEIGHT

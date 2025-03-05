@@ -11,6 +11,7 @@ class Player:
         self.corruption = 0
         self.memories_collected = 0
         self.radius = 10
+        self.last_hit_time = 0  # Time of last damage in milliseconds
 
     def update(self, dungeon, memories, boss_unlocked):
         keys = pygame.key.get_pressed()

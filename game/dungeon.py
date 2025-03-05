@@ -1,4 +1,3 @@
-# game/dungeon.py
 import random
 import math
 from config import WORLD_WIDTH, WORLD_HEIGHT, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, BRIDGE_WIDTH, BOSS_ROOM_RADIUS, MEMORY_GOAL
@@ -81,13 +80,16 @@ class Dungeon:
         if self.boss_room is None:
             attempts = 0
             while attempts < 100:
-                radius = BOSS_ROOM_RADIUS
+                radius = BOSS_ROOM_RADIUS  # Probably 200 in config
                 x = random.randint(radius, WORLD_WIDTH - radius)
                 y = random.randint(radius, WORLD_HEIGHT - radius)
                 if not self.overlaps(x, y, radius):
                     self.boss_room = (x, y, radius)
-                    self.core = (x, y)  # Core at center
+                    self.core = (x, y)
                     last_zone = self.zones[-1]
                     self.boss_bridge = (last_zone[0], last_zone[1], x, y)
+                    print(f"Boss room placed after {attempts + 1} attempts")
                     break
                 attempts += 1
+            else:
+                print("Failed to place boss room after 100 attempts")
