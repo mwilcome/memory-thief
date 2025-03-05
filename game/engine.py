@@ -4,7 +4,7 @@ from game.player import Player
 from game.dungeon import Dungeon
 from game.neuron import Neuron
 from game.memory import Memory
-from utils.render import render_all  # Added this
+from utils.render import render_all
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, WORLD_WIDTH, WORLD_HEIGHT, NEURON_COUNT
 
 class GameEngine:
@@ -33,7 +33,7 @@ class GameEngine:
     def update(self):
         self.player.update(self.dungeon, self.neurons, self.memories)
         for neuron in self.neurons[:]:
-            neuron.update(self.player, self.dungeon)
+            neuron.update(self.dungeon)  # Fixed: only pass dungeon
             dist = ((self.player.x - neuron.x) ** 2 + (self.player.y - neuron.y) ** 2) ** 0.5
             if dist < self.player.radius + neuron.radius:
                 self.memories.append(Memory(*neuron.drop_memory()))
