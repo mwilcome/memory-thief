@@ -13,15 +13,13 @@ class GameEngine:
         self.font = pygame.font.SysFont(None, 24)  # Regular UI font
         self.win_font = pygame.font.SysFont(None, 72)  # Big victory font
         self.game_over = False
-        self.game_over_timer = 0
         self.win = False
-        self.win_timer = 0
-        self.wins = 0  # Track total wins
-        self.losses = 0  # Track total losses
+        self.wins = 0
+        self.losses = 0
         self.reset()
 
     def reset(self):
-        """Reset the game state for a new run, keeping win/loss counters."""
+        """Reset the game state for a new run."""
         self.dungeon = Dungeon()
         self.player = Player(self.dungeon.zones[0][0], self.dungeon.zones[0][1])
         self.neurons = [Neuron(self.dungeon) for _ in range(NEURON_COUNT)]
@@ -29,9 +27,7 @@ class GameEngine:
         self.camera_y = 0
         self.boss_unlocked = False
         self.game_over = False
-        self.game_over_timer = 0
         self.win = False
-        self.win_timer = 0
 
     def run(self, clock):
         while self.running:
@@ -44,6 +40,10 @@ class GameEngine:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Enter key
+                    if self.game_over or self.win:
+                        self.reset()
 
     def update(self):
         if not self.game_over and not self.win:
@@ -54,9 +54,8 @@ class GameEngine:
                 if dist < self.player.radius + neuron.radius:
                     self.player.hp -= 10
                     if self.player.hp <= 0:
-                        self.losses += 1  # Increment losses
+                        self.losses += 1
                         self.game_over = True
-                        self.game_over_timer = 180  # 3 seconds at 60 FPS
                         break
             if self.player.memories_collected >= MEMORY_GOAL and not self.boss_unlocked:
                 self.dungeon.unlock_boss_room()
@@ -64,19 +63,10 @@ class GameEngine:
             if self.dungeon.core and self.boss_unlocked:
                 cx, cy = self.dungeon.core
                 if ((self.player.x - cx) ** 2 + (self.player.y - cy) ** 2) ** 0.5 < self.player.radius + 10:
-                    self.wins += 1  # Increment wins
+                    self.wins += 1
                     self.win = True
-                    self.win_timer = 180  # 3 seconds at 60 FPS
             self.camera_x = max(0, min(WORLD_WIDTH - SCREEN_WIDTH, self.player.x - SCREEN_WIDTH // 2))
             self.camera_y = max(0, min(WORLD_HEIGHT - SCREEN_HEIGHT, self.player.y - SCREEN_HEIGHT // 2))
-        elif self.game_over:
-            self.game_over_timer -= 1
-            if self.game_over_timer <= 0:
-                self.reset()
-        elif self.win:
-            self.win_timer -= 1
-            if self.win_timer <= 0:
-                self.reset()
 
     def render(self):
         render_all(self.screen, self.player, self.dungeon, self.neurons, self.dungeon.memories, self.camera_x, self.camera_y, self.boss_unlocked)
@@ -93,9 +83,11 @@ class GameEngine:
             boss_text = self.font.render("Boss Room Unlocked!", True, (255, 255, 0))
             self.screen.blit(boss_text, (10, 130))
         if self.game_over:
-            game_over_text = self.font.render("You were overwhelmed! Resetting...", True, (255, 0, 0))
-            self.screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
+            game_over_text = self.font.render("You were overwhelmed! Press Enter to reset...", True, (255, 0, 0))
+            self.screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2))
         if self.win:
             win_text = self.win_font.render("Victory! Core Secured!", True, (0, 255, 0))
+            reset_prompt = self.font.render("Press Enter to reset...", True, (255, 255, 255))
             self.screen.blit(win_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 36))
+            self.screen.blit(reset_prompt, (SCREEN_WIDTH // 2 - 80, SCREEN_HEIGHT // 2 + 50))
         pygame.display.flip()
