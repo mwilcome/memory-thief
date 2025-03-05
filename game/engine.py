@@ -16,6 +16,7 @@ class GameEngine:
         self.win = False
         self.wins = 0
         self.losses = 0
+        self.intro = True  # Start in intro mode
         self.reset()
 
     def reset(self):
@@ -41,12 +42,14 @@ class GameEngine:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # Enter key
-                    if self.game_over or self.win:
+                if event.key == pygame.K_RETURN:
+                    if self.intro:
+                        self.intro = False  # Exit intro on Enter
+                    elif self.game_over or self.win:
                         self.reset()
 
     def update(self):
-        if not self.game_over and not self.win:
+        if not self.intro and not self.game_over and not self.win:  # Skip update during intro
             self.player.update(self.dungeon, self.dungeon.memories, self.boss_unlocked)
             for neuron in self.neurons:
                 neuron.update(self.dungeon)
@@ -69,25 +72,41 @@ class GameEngine:
             self.camera_y = max(0, min(WORLD_HEIGHT - SCREEN_HEIGHT, self.player.y - SCREEN_HEIGHT // 2))
 
     def render(self):
-        render_all(self.screen, self.player, self.dungeon, self.neurons, self.dungeon.memories, self.camera_x, self.camera_y, self.boss_unlocked)
-        # UI Elements
-        memory_text = self.font.render(f"Memories: {self.player.memories_collected}/{MEMORY_GOAL}", True, (255, 255, 255))
-        hp_text = self.font.render(f"HP: {self.player.hp}", True, (255, 255, 255))
-        wins_text = self.font.render(f"Wins: {self.wins}", True, (255, 255, 255))
-        losses_text = self.font.render(f"Losses: {self.losses}", True, (255, 255, 255))
-        self.screen.blit(memory_text, (10, 10))
-        self.screen.blit(hp_text, (10, 40))
-        self.screen.blit(wins_text, (10, 70))
-        self.screen.blit(losses_text, (10, 100))
-        if self.boss_unlocked:
-            boss_text = self.font.render("Boss Room Unlocked!", True, (255, 255, 0))
-            self.screen.blit(boss_text, (10, 130))
-        if self.game_over:
-            game_over_text = self.font.render("You were overwhelmed! Press Enter to reset...", True, (255, 0, 0))
-            self.screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2))
-        if self.win:
-            win_text = self.win_font.render("Victory! Core Secured!", True, (0, 255, 0))
-            reset_prompt = self.font.render("Press Enter to reset...", True, (255, 255, 255))
-            self.screen.blit(win_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 36))
-            self.screen.blit(reset_prompt, (SCREEN_WIDTH // 2 - 80, SCREEN_HEIGHT // 2 + 50))
+        if self.intro:
+            self.screen.fill((20, 20, 30))  # Dark background
+            title_text = self.win_font.render("Memory Thief", True, (255, 255, 255))
+            intro_lines = [
+                "Welcome to Memory Thief!",
+                "Move with WASD to explore the mindscape.",
+                "Collect 5 blue memories to unlock the boss room.",
+                "Avoid red neurons—they’ll drain your HP!",
+                "Grab the yellow core in the boss room to win.",
+                "Press Enter to start!"
+            ]
+            self.screen.blit(title_text, (SCREEN_WIDTH // 2 - 150, 50))
+            for i, line in enumerate(intro_lines):
+                text = self.font.render(line, True, (255, 255, 255))
+                self.screen.blit(text, (SCREEN_WIDTH // 2 - len(line) * 8, 150 + i * 30))
+        else:
+            render_all(self.screen, self.player, self.dungeon, self.neurons, self.dungeon.memories, self.camera_x, self.camera_y, self.boss_unlocked)
+            # UI Elements
+            memory_text = self.font.render(f"Memories: {self.player.memories_collected}/{MEMORY_GOAL}", True, (255, 255, 255))
+            hp_text = self.font.render(f"HP: {self.player.hp}", True, (255, 255, 255))
+            wins_text = self.font.render(f"Wins: {self.wins}", True, (255, 255, 255))
+            losses_text = self.font.render(f"Losses: {self.losses}", True, (255, 255, 255))
+            self.screen.blit(memory_text, (10, 10))
+            self.screen.blit(hp_text, (10, 40))
+            self.screen.blit(wins_text, (10, 70))
+            self.screen.blit(losses_text, (10, 100))
+            if self.boss_unlocked:
+                boss_text = self.font.render("Boss Room Unlocked!", True, (255, 255, 0))
+                self.screen.blit(boss_text, (10, 130))
+            if self.game_over:
+                game_over_text = self.font.render("You were overwhelmed! Press Enter to reset...", True, (255, 0, 0))
+                self.screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2))
+            if self.win:
+                win_text = self.win_font.render("Victory! Core Secured!", True, (0, 255, 0))
+                reset_prompt = self.font.render("Press Enter to reset...", True, (255, 255, 255))
+                self.screen.blit(win_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 36))
+                self.screen.blit(reset_prompt, (SCREEN_WIDTH // 2 - 80, SCREEN_HEIGHT // 2 + 50))
         pygame.display.flip()

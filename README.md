@@ -13,10 +13,25 @@ A top-down 2D roguelite built with Python and Pygame. Infiltrate procedurally ge
 
 - [x] Basic player movement (WASD)
 - [x] Procedural dungeon generation (rooms + corridors)
-- [ ] Collision with dungeon walls
-- [ ] Neuron enemies with memory drops
-- [ ] Memory absorption and corruption system
-- [ ] Core Memory boss and exit
+- [x] Collision with dungeon walls
+- [x] Neuron enemies with memory drops
+- [x] Memory absorption and corruption system
+- [x] Core Memory boss and exit
+- [ ] Any More Ideas?
+
+## Screenshots
+
+### Intro Screen
+Start your journey with the rules laid out.
+![Intro Screen](screenshots/entrypoint.png)
+
+### Victory
+Secure the core and claim your win!
+![Victory Screen](screenshots/win.png)
+
+### Game Over
+Too many hits? Time to try again.
+![Game Over Screen](screenshots/loss.png)
 
 ## Getting Started
 
