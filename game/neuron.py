@@ -1,11 +1,12 @@
-# game/neuron.py
 import random
 import math
 from config import NEURON_SPEED, WORLD_WIDTH, WORLD_HEIGHT
 
 class Neuron:
     def __init__(self, dungeon):
-        zone = random.choice(dungeon.zones)
+        # Pick a zone from zones 1 through 3, skipping zone 0 (player's start)
+        available_zones = dungeon.zones[1:]
+        zone = random.choice(available_zones)
         x, y, radius = zone
         self.x = random.randint(x - radius + 15, x + radius - 15)
         self.y = random.randint(y - radius + 15, y + radius - 15)

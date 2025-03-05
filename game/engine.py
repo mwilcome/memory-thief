@@ -5,6 +5,7 @@ from game.dungeon import Dungeon
 from game.neuron import Neuron
 from utils.render import render_all
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, WORLD_WIDTH, WORLD_HEIGHT, NEURON_COUNT, MEMORY_GOAL
+from pygame.time import get_ticks
 
 class GameEngine:
     def __init__(self, screen):
@@ -23,6 +24,7 @@ class GameEngine:
         """Reset the game state for a new run."""
         self.dungeon = Dungeon()
         self.player = Player(self.dungeon.zones[0][0], self.dungeon.zones[0][1])
+        print(f"Player reset with HP: {self.player.hp}")
         self.neurons = [Neuron(self.dungeon) for _ in range(NEURON_COUNT)]
         self.camera_x = 0
         self.camera_y = 0
@@ -49,17 +51,21 @@ class GameEngine:
                         self.reset()
 
     def update(self):
-        if not self.intro and not self.game_over and not self.win:  # Skip update during intro
+        if not self.intro and not self.game_over and not self.win:
             self.player.update(self.dungeon, self.dungeon.memories, self.boss_unlocked)
             for neuron in self.neurons:
                 neuron.update(self.dungeon)
                 dist = ((self.player.x - neuron.x) ** 2 + (self.player.y - neuron.y) ** 2) ** 0.5
                 if dist < self.player.radius + neuron.radius:
-                    self.player.hp -= 10
-                    if self.player.hp <= 0:
-                        self.losses += 1
-                        self.game_over = True
-                        break
+                    current_time = get_ticks()
+                    if current_time - self.player.last_hit_time >= 1000:  # 1-second cooldown
+                        self.player.hp -= 10
+                        print(f"Player hit! HP now {self.player.hp}")
+                        self.player.last_hit_time = current_time
+                        if self.player.hp <= 0:
+                            self.losses += 1
+                            self.game_over = True
+                            break
             if self.player.memories_collected >= MEMORY_GOAL and not self.boss_unlocked:
                 self.dungeon.unlock_boss_room()
                 self.boss_unlocked = True

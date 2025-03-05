@@ -1,4 +1,3 @@
-# utils/render.py
 import pygame
 from config import COLORS, SCREEN_WIDTH, SCREEN_HEIGHT, BRIDGE_WIDTH
 
