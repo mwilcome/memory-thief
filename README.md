@@ -18,6 +18,20 @@ A top-down 2D roguelite built with Python and Pygame. Infiltrate procedurally ge
 - [ ] Memory absorption and corruption system
 - [ ] Core Memory boss and exit
 
+## Screenshots
+
+### Intro Screen
+Start your journey with the rules laid out.
+![Intro Screen](screenshots/entrypoint.png)
+
+### Victory
+Secure the core and claim your win!
+![Victory Screen](screenshots/win.png)
+
+### Game Over
+Too many hits? Time to try again.
+![Game Over Screen](screenshots/loss.png)
+
 ## Getting Started
 
 1. **Prerequisites**: Python 3.7+ and Git.
