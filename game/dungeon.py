@@ -1,14 +1,12 @@
 # game/dungeon.py
 import random
-from config import WORLD_WIDTH, WORLD_HEIGHT, ZONE_MIN_COUNT, ZONE_MAX_COUNT, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, BRIDGE_WIDTH
+from config import WORLD_WIDTH, WORLD_HEIGHT, ZONES, ZONE_MIN_RADIUS, ZONE_MAX_RADIUS, BRIDGE_WIDTH
 
 class Dungeon:
-    def __init__(self, min_zones=ZONE_MIN_COUNT, max_zones=ZONE_MAX_COUNT, min_radius=ZONE_MIN_RADIUS, max_radius=ZONE_MAX_RADIUS):
+    def __init__(self, num_zones=ZONES, min_radius=ZONE_MIN_RADIUS, max_radius=ZONE_MAX_RADIUS):
         self.zones = []
         self.bridges = []
-        self.min_zones = min_zones
-        self.max_zones = max_zones
-        self.num_zones = random.randint(self.min_zones, self.max_zones)  # Random within range
+        self.num_zones = num_zones
         self.min_radius = min_radius
         self.max_radius = max_radius
         self.generate()
@@ -16,22 +14,13 @@ class Dungeon:
     def generate(self):
         attempts = 0
         max_attempts = self.num_zones * 10
-        sizes = [self.max_radius] * (self.num_zones // 2) + [self.min_radius] * (self.num_zones - self.num_zones // 2)
-        random.shuffle(sizes)
         while len(self.zones) < self.num_zones and attempts < max_attempts:
-            radius = sizes[len(self.zones)] if len(self.zones) < len(sizes) else random.randint(self.min_radius, self.max_radius)
-            x = random.randint(radius, WORLD_WIDTH - radius)
-            y = random.randint(radius, WORLD_HEIGHT - radius)
-            if not self.overlaps(x, y, radius):
-                self.zones.append((x, y, radius))
-            attempts += 1
-        # Ensure at least min_zones
-        while len(self.zones) < self.min_zones:
             radius = random.randint(self.min_radius, self.max_radius)
             x = random.randint(radius, WORLD_WIDTH - radius)
             y = random.randint(radius, WORLD_HEIGHT - radius)
             if not self.overlaps(x, y, radius):
                 self.zones.append((x, y, radius))
+            attempts += 1
         if len(self.zones) > 1:
             for i in range(len(self.zones) - 1):
                 x1, y1 = self.zones[i][0], self.zones[i][1]
