@@ -14,11 +14,14 @@ BRIDGE_WIDTH = 30
 NEURON_COUNT = 10
 NEURON_SPEED = 2
 MEMORY_CORRUPTION = 10
+MEMORY_GOAL = 5  # Memories needed to unlock boss room
+BOSS_ROOM_RADIUS = 200
 COLORS = {
     "BACKGROUND": (20, 20, 30),
     "PLAYER": (0, 255, 0),
     "NEURON": (255, 0, 100),
     "MEMORY": (100, 100, 255),
     "ZONE": (70, 70, 90),
-    "BRIDGE": (120, 80, 120)
+    "BRIDGE": (120, 80, 120),
+    "BOSS_ZONE": (100, 0, 100)  # Purple for boss room
 }

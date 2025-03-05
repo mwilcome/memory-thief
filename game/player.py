@@ -1,20 +1,18 @@
 # game/player.py
 import pygame
-from config import PLAYER_SPEED, WORLD_WIDTH, WORLD_HEIGHT, FPS
-from game.memory import apply_memory
+from config import PLAYER_SPEED, WORLD_WIDTH, WORLD_HEIGHT, FPS, MEMORY_GOAL
 
 class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.base_speed = PLAYER_SPEED
         self.speed = PLAYER_SPEED
         self.hp = 100
         self.corruption = 0
-        self.memories = []
+        self.memories_collected = 0
         self.radius = 10
 
-    def update(self, dungeon=None, neurons=None, memories=None):
+    def update(self, dungeon, memories, boss_unlocked):
         keys = pygame.key.get_pressed()
         new_x, new_y = self.x, self.y
 
@@ -23,20 +21,15 @@ class Player:
         if keys[pygame.K_a]: new_x -= self.speed
         if keys[pygame.K_d]: new_x += self.speed
 
-        if not dungeon or dungeon.contains(new_x, new_y, self.radius):
+        if dungeon.contains(new_x, new_y, self.radius, boss_unlocked):
             self.x, self.y = new_x, new_y
         self.x = max(self.radius, min(WORLD_WIDTH - self.radius, self.x))
         self.y = max(self.radius, min(WORLD_HEIGHT - self.radius, self.y))
 
-        dt = 1 / FPS
-        self.memories = [m for m in self.memories if m.update(dt)]
-        if not any(m.ability == "speed" for m in self.memories):
-            self.speed = self.base_speed
-
-        if memories:
-            for i, mem in enumerate(memories):
-                dist = ((self.x - mem.x) ** 2 + (self.y - mem.y) ** 2) ** 0.5
-                if dist < self.radius + mem.radius:
-                    apply_memory(self, mem)
-                    memories.pop(i)
-                    break
+        # Check for memory collection
+        for i, mem in enumerate(memories):
+            dist = ((self.x - mem[0]) ** 2 + (self.y - mem[1]) ** 2) ** 0.5
+            if dist < self.radius + 8:
+                self.memories_collected += 1
+                memories.pop(i)
+                break
